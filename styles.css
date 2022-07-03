@@ -1,0 +1,39 @@
+body {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+#calcContainer{
+    display: flex;
+    flex-direction: column;
+    height: 65%;
+    width: 30%;
+    border: solid red;
+}
+
+#calcDisplay {
+    background-color: #264653;
+    color: white;
+    height: 25%;
+}
+
+#buttonContainer {
+    display: flex;
+    flex-direction: column;
+    height: 75%;
+}
+
+.row {
+   flex: 1 1 auto;
+}
+
+.row > button {
+    width: 24%;
+    height: 100%;
+}
+
+#row5 > button{
+    width: 32.5%;
+}
