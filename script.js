@@ -1,9 +1,9 @@
 const buttons = document.querySelectorAll('button');
 const calcDisplay = document.getElementById('calcDisplay');
-let operandFlag = false;
-let clearFlag = false;
+let isSecondNumber = false;
+let clearScreen = false;
 let newCalc = false;
-let numberStorage = {0: '', 1: '', 2: ''};
+let numberStorage = ['', '', ''];
 // --------------------------------------------------------------------------//
 
 function add(a,b){
@@ -19,60 +19,75 @@ function multiply(a,b){
 }
 
 function divide(a,b){
-    return (b != 0) ? a/b : "Only Chuck Norris May Divide by 0";
+    return (b != 0) ? a/b : alert("Only Chuck Norris can Divide by 0");
 }
 
-function operate(list){
-    const operator = list[1];
-    if (operator == '+') {return add(Number(list[0]),Number(list[2]));}
-    else if (operator == '-') {return subtract(list[0],list[2]);}
-    else if (operator == 'x') {return multiply(list[0],list[2]);}
-    else if (operator == '/') {return divide(list[0],list[2]);}
+function operate(arr){
+    const operator = arr[1];
+    if (operator == '+') {return add(Number(arr[0]),Number(arr[2]));}
+    else if (operator == '-') {return subtract(arr[0],arr[2]);}
+    else if (operator == 'x') {return multiply(arr[0],arr[2]);}
+    else if (operator == '/') {return divide(arr[0],arr[2]);}
 }
 
-function updateDisplay(){
+function updateDisplay(userInput){ 
+    let currentIndex = (isSecondNumber) ? 2 : 0;
+
     if(this.textContent.match(/[\*x\/+-]/gm) && this.textContent != '+/-'){
-        operandFlag = clearFlag = true;
+        isSecondNumber = clearScreen = true;
         if(newCalc){
+            // Operation is being contiued after pressing '='. ie: 1+1=2+...
+            numberStorage = [calcDisplay.textContent, '', ''];
             newCalc = false;
-            numberStorage = {0: calcDisplay.textContent, 1: '', 2: ''};
+        } else if (!isNaN(parseInt(numberStorage[2]))){
+            // Operation is being continued without pressing '='. ie: 1+1+1
+            calcDisplay.textContent = operate(numberStorage);
+            numberStorage = [calcDisplay.textContent, this.textContent, '']
         }
         numberStorage[1] = this.textContent;
     }
-    else if (!isNaN(parseInt(this.textContent)) || this.textContent == '.'){ 
-        let temp = (operandFlag) ? 2 : 0;
-        if (clearFlag){
+    else if (!isNaN(parseInt(this.textContent))){ 
+        if (clearScreen){
             calcDisplay.textContent = '';
-            clearFlag = false;
+            clearScreen = false;
         }
         if (newCalc){
-            numberStorage = {0: '', 1: '', 2: ''};
+            numberStorage = ['','',''];
             newCalc = false;
         }
-        numberStorage[temp] += this.textContent;
+        numberStorage[currentIndex] += this.textContent;
         calcDisplay.textContent += this.textContent;
     }
     else if(this.textContent == '='){
-        calcDisplay.textContent = operate(numberStorage);
-        clearFlag = newCalc = true;
+        result = operate(numberStorage);
+        calcDisplay.textContent = result.toString().includes('.') 
+                                  ? result.toFixed(6) : result;
+        // indicate that current calculation has ended and newCalc is ready
+        clearScreen = newCalc = true;
+    }
+    else if (this.textContent == '.'){
+        if (calcDisplay.textContent.indexOf('.') == -1){
+            // ensure that user is not entering more than one '.'
+            calcDisplay.textContent += '.'
+            numberStorage[currentIndex] += '' + this.textContent;
+        }
     }
     else if(this.textContent == 'AC'){
         calcDisplay.textContent = '';
         numberStorage = {0: '', 1: '', 2: ''};
-        clearFlag = newCalc = operandFlag = false;
+        clearScreen = newCalc = isSecondNumber = false;
     }
     else if(this.textContent == '+/-'){
-        let temp = (operandFlag) ? 2 : 0;
-        numberStorage[temp] *= -1;
-        calcDisplay.textContent = numberStorage[temp];
+        numberStorage[currentIndex] *= -1;
+        calcDisplay.textContent = numberStorage[currentIndex];
     }
     else if(this.textContent == '%') {
-        let temp = (operandFlag) ? 2 : 0;
-        numberStorage[temp] /= 100;
-        calcDisplay.textContent = numberStorage[temp];
+        numberStorage[currentIndex] /= 100;
+        calcDisplay.textContent = numberStorage[currentIndex];
     }
+
 }
 
 // --------------------------------------------------------------------------//
 
-buttons.forEach(button => button.addEventListener('click', updateDisplay))
+buttons.forEach(button => button.addEventListener('click', updateDisplay));
