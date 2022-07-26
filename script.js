@@ -23,17 +23,19 @@ function divide(a,b){
 }
 
 function operate(arr){
+    console.log('Inside Operate', arr)
     const operator = arr[1];
+    console.log('Operator', operator)
     if (operator == '+') {return add(Number(arr[0]),Number(arr[2]));}
     else if (operator == '-') {return subtract(arr[0],arr[2]);}
-    else if (operator == 'x') {return multiply(arr[0],arr[2]);}
+    else if (operator == 'x' || operator == '*') {return multiply(arr[0],arr[2]);}
     else if (operator == '/') {return divide(arr[0],arr[2]);}
 }
 
 function updateDisplay(userInput){ 
     let currentIndex = (isSecondNumber) ? 2 : 0;
 
-    if(this.textContent.match(/[\*x\/+-]/gm) && this.textContent != '+/-'){
+    if(userInput.match(/[\*x\/+-]/gm) && userInput != '+/-'){
         isSecondNumber = clearScreen = true;
         if(newCalc){
             // Operation is being contiued after pressing '='. ie: 1+1=2+...
@@ -41,12 +43,15 @@ function updateDisplay(userInput){
             newCalc = false;
         } else if (!isNaN(parseInt(numberStorage[2]))){
             // Operation is being continued without pressing '='. ie: 1+1+1
+            console.log('Hello, I got here!!')
+            console.log('Number Storage Here: ', numberStorage)
             calcDisplay.textContent = operate(numberStorage);
-            numberStorage = [calcDisplay.textContent, this.textContent, '']
+            numberStorage = [calcDisplay.textContent, userInput, '']
         }
-        numberStorage[1] = this.textContent;
+        numberStorage[1] = userInput;
     }
-    else if (!isNaN(parseInt(this.textContent))){ 
+    else if (!isNaN(parseInt(userInput))){ 
+        console.log('Else if 1???')
         if (clearScreen){
             calcDisplay.textContent = '';
             clearScreen = false;
@@ -55,39 +60,49 @@ function updateDisplay(userInput){
             numberStorage = ['','',''];
             newCalc = false;
         }
-        numberStorage[currentIndex] += this.textContent;
-        calcDisplay.textContent += this.textContent;
+        numberStorage[currentIndex] += userInput;
+        calcDisplay.textContent += userInput;
     }
-    else if(this.textContent == '='){
+    else if(userInput == '='){
         result = operate(numberStorage);
         calcDisplay.textContent = result.toString().includes('.') 
                                   ? result.toFixed(6) : result;
         // indicate that current calculation has ended and newCalc is ready
         clearScreen = newCalc = true;
     }
-    else if (this.textContent == '.'){
+    else if (userInput == '.'){
         if (calcDisplay.textContent.indexOf('.') == -1){
             // ensure that user is not entering more than one '.'
             calcDisplay.textContent += '.'
-            numberStorage[currentIndex] += '' + this.textContent;
+            numberStorage[currentIndex] += '' + userInput;
         }
     }
-    else if(this.textContent == 'AC'){
+    else if(userInput == 'AC' || userInput == 'Clear'){
         calcDisplay.textContent = '';
         numberStorage = {0: '', 1: '', 2: ''};
         clearScreen = newCalc = isSecondNumber = false;
     }
-    else if(this.textContent == '+/-'){
+    else if(userInput == '+/-'){
         numberStorage[currentIndex] *= -1;
         calcDisplay.textContent = numberStorage[currentIndex];
     }
-    else if(this.textContent == '%') {
+    else if(userInput == '%') {
         numberStorage[currentIndex] /= 100;
         calcDisplay.textContent = numberStorage[currentIndex];
     }
+
+    console.log(numberStorage)
 
 }
 
 // --------------------------------------------------------------------------//
 
-buttons.forEach(button => button.addEventListener('click', updateDisplay));
+//buttons.forEach(button => button.addEventListener('click', updateDisplay));
+
+buttons.forEach(button => button.addEventListener('click', () => {
+    updateDisplay(button.textContent)
+}));
+
+window.addEventListener('keydown', (e) => {
+    updateDisplay(e.key)
+})
