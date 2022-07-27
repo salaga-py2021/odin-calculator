@@ -32,7 +32,6 @@ function operate(arr){
 
 function updateDisplay(userInput){ 
     let currentIndex = (isSecondNumber) ? 2 : 0;
-    console.log(userInput)
 
     if((userInput.match(/[\*x\/+-]/gm) || userInput == '÷') && userInput != '+/-'){
         isSecondNumber = clearScreen = true;
@@ -42,7 +41,7 @@ function updateDisplay(userInput){
             newCalc = false;
         } else if (!isNaN(parseInt(numberStorage[2]))){
             // Operation is being continued without pressing '='. ie: 1+1+1
-            calcDisplay.textContent = operate(numberStorage);
+            calcDisplay.textContent = Number(operate(numberStorage).toFixed(6));
             numberStorage = [calcDisplay.textContent, userInput, '']
         }
         numberStorage[1] = userInput;
@@ -60,9 +59,7 @@ function updateDisplay(userInput){
         calcDisplay.textContent += userInput;
     }
     else if(userInput == '=' || userInput == 'Enter'){
-        result = operate(numberStorage);
-        calcDisplay.textContent = result.toString().includes('.') 
-                                  ? result.toFixed(6) : result;
+        calcDisplay.textContent = Number(operate(numberStorage).toFixed(6));
         // indicate that current calculation has ended and newCalc is ready
         clearScreen = newCalc = true;
         isSecondNumber = false;
@@ -90,10 +87,8 @@ function updateDisplay(userInput){
     }
     else if(userInput == '%') {
         numberStorage[currentIndex] /= 100;
-        calcDisplay.textContent = numberStorage[currentIndex];
+        calcDisplay.textContent = Number(numberStorage[currentIndex].toFixed(6));
     }
-    console.log(numberStorage)
-
 }
 
 // --------------------------------------------------------------------------//
