@@ -23,9 +23,7 @@ function divide(a,b){
 }
 
 function operate(arr){
-    console.log('Inside Operate', arr)
     const operator = arr[1];
-    console.log('Operator', operator)
     if (operator == '+') {return add(Number(arr[0]),Number(arr[2]));}
     else if (operator == '-') {return subtract(arr[0],arr[2]);}
     else if (operator == 'x' || operator == '*') {return multiply(arr[0],arr[2]);}
@@ -43,8 +41,6 @@ function updateDisplay(userInput){
             newCalc = false;
         } else if (!isNaN(parseInt(numberStorage[2]))){
             // Operation is being continued without pressing '='. ie: 1+1+1
-            console.log('Hello, I got here!!')
-            console.log('Number Storage Here: ', numberStorage)
             calcDisplay.textContent = operate(numberStorage);
             numberStorage = [calcDisplay.textContent, userInput, '']
         }
@@ -82,6 +78,10 @@ function updateDisplay(userInput){
         numberStorage = {0: '', 1: '', 2: ''};
         clearScreen = newCalc = isSecondNumber = false;
     }
+    else if(userInput == 'Backspace' || userInput == 'Del' || userInput == 'Delete'){
+        calcDisplay.textContent = calcDisplay.textContent.slice(0,-1)
+        numberStorage[currentIndex] = calcDisplay.textContent
+    }
     else if(userInput == '+/-'){
         numberStorage[currentIndex] *= -1;
         calcDisplay.textContent = numberStorage[currentIndex];
@@ -91,13 +91,9 @@ function updateDisplay(userInput){
         calcDisplay.textContent = numberStorage[currentIndex];
     }
 
-    console.log(numberStorage)
-
 }
 
 // --------------------------------------------------------------------------//
-
-//buttons.forEach(button => button.addEventListener('click', updateDisplay));
 
 buttons.forEach(button => button.addEventListener('click', () => {
     updateDisplay(button.textContent)
