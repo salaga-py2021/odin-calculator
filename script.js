@@ -27,13 +27,14 @@ function operate(arr){
     if (operator == '+') {return add(Number(arr[0]),Number(arr[2]));}
     else if (operator == '-') {return subtract(arr[0],arr[2]);}
     else if (operator == 'x' || operator == '*') {return multiply(arr[0],arr[2]);}
-    else if (operator == '/') {return divide(arr[0],arr[2]);}
+    else if (operator == '/' || operator == '÷') {return divide(arr[0],arr[2]);}
 }
 
 function updateDisplay(userInput){ 
     let currentIndex = (isSecondNumber) ? 2 : 0;
+    console.log(userInput)
 
-    if(userInput.match(/[\*x\/+-]/gm) && userInput != '+/-'){
+    if((userInput.match(/[\*x\/+-]/gm) || userInput == '÷') && userInput != '+/-'){
         isSecondNumber = clearScreen = true;
         if(newCalc){
             // Operation is being contiued after pressing '='. ie: 1+1=2+...
@@ -47,7 +48,6 @@ function updateDisplay(userInput){
         numberStorage[1] = userInput;
     }
     else if (!isNaN(parseInt(userInput))){ 
-        console.log('Else if 1???')
         if (clearScreen){
             calcDisplay.textContent = '';
             clearScreen = false;
@@ -59,12 +59,14 @@ function updateDisplay(userInput){
         numberStorage[currentIndex] += userInput;
         calcDisplay.textContent += userInput;
     }
-    else if(userInput == '='){
+    else if(userInput == '=' || userInput == 'Enter'){
         result = operate(numberStorage);
         calcDisplay.textContent = result.toString().includes('.') 
                                   ? result.toFixed(6) : result;
         // indicate that current calculation has ended and newCalc is ready
         clearScreen = newCalc = true;
+        isSecondNumber = false;
+        numberStorage[0] = calcDisplay.textContent;
     }
     else if (userInput == '.'){
         if (calcDisplay.textContent.indexOf('.') == -1){
@@ -78,7 +80,7 @@ function updateDisplay(userInput){
         numberStorage = {0: '', 1: '', 2: ''};
         clearScreen = newCalc = isSecondNumber = false;
     }
-    else if(userInput == 'Backspace' || userInput == 'Del' || userInput == 'Delete'){
+    else if(userInput == 'Backspace' || userInput == '⌫' || userInput == 'Delete'){
         calcDisplay.textContent = calcDisplay.textContent.slice(0,-1)
         numberStorage[currentIndex] = calcDisplay.textContent
     }
@@ -90,6 +92,7 @@ function updateDisplay(userInput){
         numberStorage[currentIndex] /= 100;
         calcDisplay.textContent = numberStorage[currentIndex];
     }
+    console.log(numberStorage)
 
 }
 
