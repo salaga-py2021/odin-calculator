@@ -30,6 +30,10 @@ function operate(arr){
     else if (operator == '/' || operator == '÷') {return divide(arr[0],arr[2]);}
 }
 
+function roundLongNumber(num){
+    return Number(num.toFixed(6))
+}
+
 function updateDisplay(userInput){ 
     let currentIndex = (isSecondNumber) ? 2 : 0;
 
@@ -41,7 +45,7 @@ function updateDisplay(userInput){
             newCalc = false;
         } else if (!isNaN(parseInt(numberStorage[2]))){
             // Operation is being continued without pressing '='. ie: 1+1+1
-            calcDisplay.textContent = Number(operate(numberStorage).toFixed(6));
+            calcDisplay.textContent = roundLongNumber(operate(numberStorage));
             numberStorage = [calcDisplay.textContent, userInput, '']
         }
         numberStorage[1] = userInput;
@@ -59,7 +63,7 @@ function updateDisplay(userInput){
         calcDisplay.textContent += userInput;
     }
     else if(userInput == '=' || userInput == 'Enter'){
-        calcDisplay.textContent = Number(operate(numberStorage).toFixed(6));
+        calcDisplay.textContent = roundLongNumber(operate(numberStorage));
         // indicate that current calculation has ended and newCalc is ready
         clearScreen = newCalc = true;
         isSecondNumber = false;
@@ -73,11 +77,13 @@ function updateDisplay(userInput){
         }
     }
     else if(userInput == 'AC' || userInput == 'Clear'){
+        // clear and reset all variables to orginial
         calcDisplay.textContent = '';
         numberStorage = {0: '', 1: '', 2: ''};
         clearScreen = newCalc = isSecondNumber = false;
     }
     else if(userInput == 'Backspace' || userInput == '⌫' || userInput == 'Delete'){
+        // slices out the last entry in display and stores it in numStorage
         calcDisplay.textContent = calcDisplay.textContent.slice(0,-1)
         numberStorage[currentIndex] = calcDisplay.textContent
     }
@@ -87,7 +93,7 @@ function updateDisplay(userInput){
     }
     else if(userInput == '%') {
         numberStorage[currentIndex] /= 100;
-        calcDisplay.textContent = Number(numberStorage[currentIndex].toFixed(6));
+        calcDisplay.textContent = roundLongNumber(numberStorage[currentIndex]);
     }
 }
 
