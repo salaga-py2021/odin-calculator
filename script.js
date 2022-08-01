@@ -24,10 +24,15 @@ function divide(a,b){
 
 function operate(arr){
     const operator = arr[1];
-    if (operator == '+') {return add(Number(arr[0]),Number(arr[2]));}
-    else if (operator == '-') {return subtract(arr[0],arr[2]);}
-    else if (operator == 'x' || operator == '*') {return multiply(arr[0],arr[2]);}
-    else if (operator == '/' || operator == '÷') {return divide(arr[0],arr[2]);}
+    if (operator == '+'){
+        return add(Number(arr[0]),Number(arr[2]));
+    } else if (operator == '-'){
+        return subtract(arr[0],arr[2]);
+    } else if (operator == 'x' || operator == '*'){
+        return multiply(arr[0],arr[2]);
+    } else if (operator == '/' || operator == '÷'){
+        return divide(arr[0],arr[2])
+    }
 }
 
 function roundLongNumber(num){
@@ -59,13 +64,18 @@ function updateDisplay(userInput){
             numberStorage = ['','',''];
             newCalc = false;
         }
-        numberStorage[currentIndex] += userInput;
-        calcDisplay.textContent += userInput;
+        if (String(numberStorage[currentIndex]).length <= 8){
+            // prevents input number to be larger than 8 characters
+            console.log(numberStorage[currentIndex])
+            numberStorage[currentIndex] += userInput;
+            calcDisplay.textContent += userInput;
+        }
     }
     else if(userInput == '=' || userInput == 'Enter'){
         calcDisplay.textContent = roundLongNumber(operate(numberStorage));
         // indicate that current calculation has ended and newCalc is ready
-        clearScreen = newCalc = true;
+        clearScreen = true;
+        newCalc = true;
         isSecondNumber = false;
         numberStorage[0] = calcDisplay.textContent;
     }
@@ -79,8 +89,10 @@ function updateDisplay(userInput){
     else if(userInput == 'AC' || userInput == 'Clear'){
         // clear and reset all variables to orginial
         calcDisplay.textContent = '';
-        numberStorage = {0: '', 1: '', 2: ''};
-        clearScreen = newCalc = isSecondNumber = false;
+        numberStorage = ['','',''];
+        clearScreen = false;
+        newCalc = false;
+        isSecondNumber = false;
     }
     else if(userInput == 'Backspace' || userInput == '⌫' || userInput == 'Delete'){
         // slices out the last entry in display and stores it in numStorage
@@ -88,12 +100,16 @@ function updateDisplay(userInput){
         numberStorage[currentIndex] = calcDisplay.textContent
     }
     else if(userInput == '+/-'){
-        numberStorage[currentIndex] *= -1;
-        calcDisplay.textContent = numberStorage[currentIndex];
+        if (numberStorage[currentIndex] != ''){
+            numberStorage[currentIndex] *= -1;
+            calcDisplay.textContent = numberStorage[currentIndex];
+        }
     }
     else if(userInput == '%') {
-        numberStorage[currentIndex] /= 100;
-        calcDisplay.textContent = roundLongNumber(numberStorage[currentIndex]);
+        if (numberStorage[currentIndex] != ''){
+            numberStorage[currentIndex] /= 100;
+            calcDisplay.textContent = roundLongNumber(numberStorage[currentIndex]);
+        }
     }
 }
 
